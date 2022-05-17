@@ -22,9 +22,15 @@ from eve.utils import config
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
+        self.lang = kwargs.pop("lang", "en")
+        self.translations = kwargs.pop("translations", {})
         if not config.VALIDATION_ERROR_AS_LIST:
-            kwargs["error_handler"] = SingleErrorAsStringErrorHandler
-
+            kwargs["error_handler"] = (
+                SingleErrorAsStringErrorHandler,
+                {"lang": self.lang, "translations": self.translations}
+            )
+        else:
+            kwargs["error_handler"] = (LocalizedErrorHandler, {"lang": self.lang, "translations": self.translations})
         self.is_update_operation = False
         super(Validator, self).__init__(*args, **kwargs)
 
@@ -152,7 +158,14 @@ class Validator(cerberus.Validator):
         self._config["persisted_document"] = value
 
 
-class SingleErrorAsStringErrorHandler(cerberus.errors.BasicErrorHandler):
+class LocalizedErrorHandler(cerberus.errors.BasicErrorHandler):
+    def __init__(self, tree=None, lang="en", translations={}):
+
+        self.messages = translations[lang]["validation_error_messages"]
+        self.tree = {} if tree is None else tree
+
+
+class SingleErrorAsStringErrorHandler(LocalizedErrorHandler):
     """Default Cerberus error handler for Eve.
 
     Since Cerberus 1.0, error messages for fields will always be returned as

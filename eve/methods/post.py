@@ -160,11 +160,14 @@ def post_internal(resource, payl=None, skip_validation=False):
     date_utc = datetime.utcnow().replace(microsecond=0)
     resource_def = app.config["DOMAIN"][resource]
     schema = resource_def["schema"]
+    req = parse_request(resource)
     validator = (
         None
         if skip_validation
         else app.validator(
-            schema, resource=resource, allow_unknown=resource_def["allow_unknown"]
+            schema, resource=resource, allow_unknown=resource_def["allow_unknown"],
+            lang=req.lang,
+            translations=config.TRANSLATIONS,
         )
     )
 
@@ -176,7 +179,6 @@ def post_internal(resource, payl=None, skip_validation=False):
     if config.BANDWIDTH_SAVER is True:
         embedded_fields = []
     else:
-        req = parse_request(resource)
         embedded_fields = resolve_embedded_fields(resource, req)
 
     # validation, and additional fields
@@ -300,10 +302,10 @@ def post_internal(resource, payl=None, skip_validation=False):
         }
 
     if failures:
+        error_message = config.TRANSLATIONS[req.lang]["insertion_failure"] % failures
         response[config.ERROR] = {
             "code": return_code,
-            "message": "Insertion failure: %d document(s) contain(s) error(s)"
-            % failures,
+            "message": error_message,
         }
 
     location_header = (

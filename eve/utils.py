@@ -177,6 +177,9 @@ def parse_request(resource):
         r.if_modified_since = weak_date(headers.get("If-Modified-Since"))
         r.if_none_match = etag_parse("If-None-Match")
         r.if_match = etag_parse("If-Match")
+        r.lang = request.accept_languages.best_match(
+            config.LANGUAGES, default=config.DEFAULT_LANGUAGE
+        )
 
     return r
 
