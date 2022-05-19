@@ -165,6 +165,7 @@ def patch_internal(
     validator = app.validator(
         schema, resource=resource, allow_unknown=resource_def["allow_unknown"],
         lang=req.lang,
+        translations=config.TRANSLATIONS,
     )
 
     object_id = original[resource_def["id_field"]]

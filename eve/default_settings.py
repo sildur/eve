@@ -316,5 +316,6 @@ TRANSLATIONS = {
             0x94: "one or more definitions don't validate",
         },
         "insertion_failure": "Insertion failure: %d document(s) contain(s) error(s)",
+        "url_not_found": "The requested URL was not found on this server.",
     }
 }

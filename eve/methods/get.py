@@ -496,9 +496,10 @@ def getitem_internal(resource, **lookup):
         # This document was soft deleted. Respond with 404 and the deleted
         # version of the document.
         document[config.STATUS] = (config.STATUS_ERR,)
+        error_message = config.TRANSLATIONS[req.lang]["url_not_found"]
         document[config.ERROR] = {
             "code": 404,
-            "message": "The requested URL was not found on this server.",
+            "message": error_message,
         }
         return document, last_modified, etag, 404
     else:

@@ -124,8 +124,11 @@ def put_internal(
     """
     resource_def = app.config["DOMAIN"][resource]
     schema = resource_def["schema"]
+    req = parse_request(resource)
     validator = app.validator(
-        schema, resource=resource, allow_unknown=resource_def["allow_unknown"]
+        schema, resource=resource, allow_unknown=resource_def["allow_unknown"],
+        lang=req.lang,
+        translations=config.TRANSLATIONS,
     )
 
     if payload is None:
@@ -170,7 +173,6 @@ def put_internal(
     if config.BANDWIDTH_SAVER is True:
         embedded_fields = []
     else:
-        req = parse_request(resource)
         embedded_fields = resolve_embedded_fields(resource, req)
 
     try:
