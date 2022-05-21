@@ -22,8 +22,8 @@ from eve.utils import config
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
-        self.lang = kwargs.pop("lang", "en")
-        self.translations = kwargs.pop("translations", {})
+        self.lang = kwargs.get("lang", "en")
+        self.translations = kwargs.get("translations", {})
         if not config.VALIDATION_ERROR_AS_LIST:
             kwargs["error_handler"] = (
                 SingleErrorAsStringErrorHandler,
