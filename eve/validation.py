@@ -159,7 +159,7 @@ class Validator(cerberus.Validator):
 
 
 class LocalizedErrorHandler(cerberus.errors.BasicErrorHandler):
-    def __init__(self, tree=None, lang="en", translations={}):
+    def __init__(self, tree=None, lang="en", translations={"en": {"validation_error_messages": {}}}):
 
         self.messages = translations[lang]["validation_error_messages"]
         self.tree = {} if tree is None else tree
